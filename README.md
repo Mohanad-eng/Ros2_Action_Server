@@ -29,7 +29,9 @@ This file contains three parts:
 2. **Result** – What the server returns after completing the goal.  
 3. **Feedback** – Continuous updates about the goal's progress.
 
+
 ![Robot Action](https://docs.ros.org/en/jazzy/_images/Action-SingleActionClient.gif)
+---
 
 Example: `DiffDrive.action`
 
