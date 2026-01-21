@@ -388,12 +388,16 @@ ros2 run move_turtle server
 
 ---
 **now this is a requerments for you to make the project more interesting**
-1. add a PID controller \
-2- try to make the line color change to a certain color \
-3- spawn a turtle and make the two go to the goal \
+1. add a PID controller  
+2. try to make the line color change to a certain color
+3. spawn a turtle and make the two go to the goal 
+---
+## references 
+
+1. https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html
+2. https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Service-And-Client.html
+3. https://foxglove.dev/blog/creating-ros2-actions
 
 ---
-## refrences 
----
-**hope you enjoied the project **
-***All copyrights**
+**hope you enjoied the project**\
+**All copyrights**
