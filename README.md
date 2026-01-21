@@ -2,7 +2,9 @@
 
 This repository demonstrates **ROS 2 Action Servers** with example code, explanations, and projects using them.  
 
-Actions in ROS 2 are used when you want to **send a goal to a node**, get **continuous feedback** about the goal's progress, and finally receive the **result** when the goal completes.  
+Actions in ROS 2 are used when you want to **send a goal to a node**, get **continuous feedback** about the goal's progress, and finally receive the **result** when the goal completes. 
+
+Ros2 Actions are suitable for **long running tasks** as navigation tasks
 
 Think of it like giving someone a task, **checking in as they progress**, and then finally confirming the task is completed successfully. ✅  
 
@@ -29,6 +31,22 @@ This file contains three parts:
 2. **Result** – What the server returns after completing the goal.  
 3. **Feedback** – Continuous updates about the goal's progress.
 
+### How the Ros2 Actions work
+looking at the photo below
+
+first, the Client sends a service Request (mean sending a goal) like if I have a robot i will make it go to explore a place I gave it a goal to go to it. 
+
+then, the server recive the request, and give a response that will be Goal Accepted.
+
+after that it starts reaching the goal in the robot case it moves to the goal, and sends feedback to the client to tell me how far it go.
+
+when the robot reach the goal, client make a second service request to the result if the robot reached the goal or not.
+
+the server sends a response with the result to client.
+
+and this is how the Actions work.
+
+as we know from the advantges of the Actions that you can cancel the goal at anytime and send new one
 
 ![Robot Action](https://docs.ros.org/en/jazzy/_images/Action-SingleActionClient.gif)
 ---
@@ -337,7 +355,39 @@ if __name__ == '__main__':
     main()
 ```
 **Take care you should Write the code with your hands try and this code is a reference code**
+## Explaning The code 
+**Client code**
+```
+import rclpy
+from rclpy.node import Node
+from rclpy.action import ActionClient
+from action_pkg.action import Turtle
+```
+> first import the imp things like rclpy,node, and Action client to make the client object,and from the Action_pkg we made import the .action file
+```
+class TurtleActionClient(Node):
+    def __init__(self):
+        super().__init__('turtle_action_client')
+        self.client = ActionClient(self, Turtle, 'turtle_action')
+``` 
+> construct the class and make an Action client object, it takes the (self,Action type,Action name)
+```
+def send_goal(self, x, y, theta):
+        self.client.wait_for_server()
+        goal_msg = Turtle.Goal()
+        goal_msg.target_x = x
+        goal_msg.target_y = y
+        goal_msg.target_theta = theta
 
+        self._future = self.client.send_goal_async(
+            goal_msg,
+            feedback_callback=self.feedback_callback
+        )
+        self._future.add_done_callback(self.goal_response_callback)
+```
+> first make a send goal function that send the goal to the server, here it takes x,y,theta that are the goals in the .action file 
+
+>secondly you wait for the server to be free or avaliable, then you create a goal_msg object by accses the Turtle.GOAL() that contain the three goals in the .action file 
 * then go to the setup.py and Add the Entery points inside the Entery point  
 ```
 'server=move_turtle.Server:main',
