@@ -378,4 +378,4 @@ ros2 run move_turtle client
 ```
 ros2 run move_turtle server
 ```
-![Action Workflow](image_1.png)
+![Action Workflow](image.png)
