@@ -625,23 +625,23 @@ ros2 run move_turtle server
 ```
 ros2 interface show <package_name>/<directory_name>/<file_name>
 ```
-this is used to check your .action is correct
+* this is used to check your .action is correct
 ```
 ros2 action list
 ```
-show all active actions
+* show all active actions
 ```
 ros2 action info /action_name
 ```
-Get information about a specific action
+* Get information about a specific action
 ```
 ros2 topic echo /<action_name>/_folder/feedback
 ```
-Observe feedback in real-time
+* Observe feedback in real-time
 ```
 ros2 topic echo /<action_name>/_folder/result
 ```
-Observe the result of a finished goal
+* Observe the result of a finished goal
 ## references 
 
 1. https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html
@@ -649,5 +649,5 @@ Observe the result of a finished goal
 3. https://foxglove.dev/blog/creating-ros2-actions
 
 ---
-**hope you enjoied the project**\
+**hope you enjoyed the project**\
 **All copyrights**
