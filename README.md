@@ -366,13 +366,7 @@ from action_pkg.action import Turtle
 ```
 > first import the imp things like rclpy,node, and Action client to make the client object,and from the Action_pkg we made import the .action file
 
-> this is the goal_msg when we give it parameters
 
->goal_msg = {
-  target_x: 5.0,
-  target_y: 5.0,
-  target_theta: 1.57
-}
 ```
 class TurtleActionClient(Node):
     def __init__(self):
@@ -387,20 +381,20 @@ def send_goal(self, x, y, theta):
         goal_msg.target_x = x
         goal_msg.target_y = y
         goal_msg.target_theta = theta
+```
+> first make a send goal function that send the goal to the server, here it takes x,y,theta that are the goals in the .action file 
 
+>secondly you wait for the server to be free or avaliable, then you create a goal_msg object by accses the Turtle.GOAL() that contain the three goals in the .action file 
+```
         self._future = self.client.send_goal_async(
             goal_msg,
             feedback_callback=self.feedback_callback
         )
         self._future.add_done_callback(self.goal_response_callback)
 ```
-> first make a send goal function that send the goal to the server, here it takes x,y,theta that are the goals in the .action file 
-
->secondly you wait for the server to be free or avaliable, then you create a goal_msg object by accses the Turtle.GOAL() that contain the three goals in the .action file 
-
 > then send the goal to the server and wait for the feedback , the self.feedback_callback will be invoked when the server receive the goal
 
-> and then take the response from the server as it finished or not
+> and then take the response from the server as it finished or not.
 ```
  def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
@@ -409,7 +403,7 @@ def send_goal(self, x, y, theta):
             f"theta={feedback.current_theta:.2f}, remaining={feedback.current_distance:.2f}"
         )
 ```
-> here is the feedback_callback that is called by ros when there is a feedback from the server and store the feedback coming from the server in feedback_msg (it is a parameter ros give to callback as it contain the feedback msg), and then we take fro it the feedback we want
+> here is the feedback_callback function that is called by Ros when there is a feedback from the server and store the feedback coming from the server in **feedback_msg** (it is a parameter ros give to callback as it contain the feedback msg), and then we log the feedback on the screen using get_logger()
 ```
 def goal_response_callback(self, future):
         goal_handle = future.result()
@@ -420,16 +414,30 @@ def goal_response_callback(self, future):
         self._result_future = goal_handle.get_result_async()
         self._result_future.add_done_callback(self.result_callback)
 ```
-> here in the goal response we see if the goal accepted,aborted,or canceled 
 
-> and if accepted we store the result in the result_future and we print it using the result_callback 
+>this function Called after the client sends a goal and the server responds. The future parameter is a Future object representing the pending goal response from the server.
+
+>goal_handle = future.result() → retrieves the Goal Handle object from the server. It contains information about the goal, including whether it was accepted and methods to get the result or cancel the goal.
+
+>if not goal_handle.accepted: → checks if the server rejected the goal. If rejected, logs a message and stops.
+
+>self.get_logger().info('Goal accepted') → logs that the server accepted the goal. The client can now wait for feedback and the final result.
+
+>self._result_future = goal_handle.get_result_async() → asks the server for the final result of the goal asynchronously. Returns a Future object immediately, which will be filled once the goal finishes.
+
+>self._result_future.add_done_callback(self.result_callback) → registers a callback function to be called automatically when the Future is ready.
+
+>result_callback(future) → the callback receives the Future when it is completed. Inside this function, you can access the actual result from the server  and then i can print it on the screen
+
+>Inside it, you can get the result:
+
 ```
     def result_callback(self, future):
         result = future.result().result
         self.get_logger().info(f"Result: {result.message} at x={result.final_x:.2f}, y={result.final_y:.2f}")
         rclpy.shutdown()
 ```
-> here it is called when the server send the request for the result and it prints the final result and close ros 
+> here it is called when the server send the response for the result request and it prints the final result and close ros 
 ```
 def main(args=None):
     rclpy.init(args=args)
@@ -453,7 +461,13 @@ from math import sqrt, atan2, pi
 from action_pkg.action import Turtle
 import time
 ```
-> here we import the important things to use
+> rclpy, Node: ROS 2 Python client and base node class.
+
+> ActionServer: helper that wires up the Action’s Goal/Feedback/Result plumbing.
+
+> geometry_msgs.msg : to publish velocity to move turtle
+
+> math : to use the sqrt and pi
 ---
 ```
 class TurtleActionServer(Node):
@@ -531,9 +545,10 @@ def pose_callback(self, msg):
         goal_handle.succeed()
         return result
 ```
-> Let's taik about this code , here when the server receive the goal ros call the excute_callback function and store the goal in goal_handle object called by ROS when a client sends a goal.
+> Let's taIk about this code , here when the server receive the goal ros call the excute_callback function and store the goal in a goal_handle object called by ROS when a client sends a goal.
 
-> first we make a goal object, result object, feedback object
+> first we make a goal object, result object, feedback object.
+
 >goal_handle → contains the goal request from the client.
 
 >feedback → used to continuously send updates.
@@ -541,13 +556,16 @@ def pose_callback(self, msg):
 >result → sent to the client after the goal is finished.
 
 > after we compute the distance and the angle we rotate the turtle to the goal
-> and then we publish velocity to the turtle to move 
+
+> and then we publish velocity to the turtle to move to the goal. 
 
 > then we send feedback and use publish_feedback() to publish the feedback to the client.
 
 > and use time.sleep() to decrease the rate of sending feedback and make the turtle move.
 
-> if we reach the distance we stop the turtle and put the x,y,theta we reached and send it at the result and make the goal_handle.succed(), and then return result to the client.
+> and this loop are running until the distance between the turtle and the goal reach a very small number we assume here that the turtle reached the goal, and at this point the server sends a result response to the client saying that it reached the goal.
+
+> after we reach the goal  we stop the turtle and we give the result parameters the final_x,final_y,final_theta that are inside the .action file and send it at the result to client and Calls goal_handle.succeed() to mark the goal as successful, and then return result to the client.
 ---
 * then go to the setup.py and Add the Entery points inside the Entery point  
 ```
@@ -603,6 +621,27 @@ ros2 run move_turtle server
 2. try to make the line color change to a certain color
 3. spawn a turtle and make the two go to the goal 
 ---
+**Important Action commands For troubleshooting**
+```
+ros2 interface show <package_name>/<directory_name>/<file_name>
+```
+this is used to check your .action is correct
+```
+ros2 action list
+```
+show all active actions
+```
+ros2 action info /action_name
+```
+Get information about a specific action
+```
+ros2 topic echo /<action_name>/_folder/feedback
+```
+Observe feedback in real-time
+```
+ros2 topic echo /<action_name>/_folder/result
+```
+Observe the result of a finished goal
 ## references 
 
 1. https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html
