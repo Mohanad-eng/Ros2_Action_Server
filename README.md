@@ -1,6 +1,6 @@
-# ROS 2 Action Server
+# ROS 2 Action 
 
-This repository demonstrates **ROS 2 Action Servers** with example code, explanations, and projects using them.  
+This repository demonstrates **ROS 2 Action** with example code, explanations, and projects using them.  
 
 Actions in ROS 2 are used when you want to **send a goal to a node**, get **continuous feedback** about the goal's progress, and finally receive the **result** when the goal completes. 
 
