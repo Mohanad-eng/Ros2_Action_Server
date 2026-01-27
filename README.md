@@ -622,6 +622,8 @@ ros2 run move_turtle server
 3. spawn a turtle and make the two go to the goal 
 ---
 **Important Action commands For troubleshooting**
+
+**Take care** you must source the Workspace in any terminal you try to **Send** a goal in it
 ```
 ros2 interface show <package_name>/<directory_name>/<file_name>
 ```
@@ -642,6 +644,10 @@ ros2 topic echo /<action_name>/_folder/feedback
 ros2 topic echo /<action_name>/_folder/result
 ```
 * Observe the result of a finished goal
+```
+ros2 action send_goal /follow_path pkgname/action/filename "Goal according to the goal message"
+```
+Sending goal
 ## references 
 
 1. https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html
