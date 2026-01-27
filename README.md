@@ -575,7 +575,7 @@ def pose_callback(self, msg):
 ## Third Now we build the Ws again
 * go to the ros2_ws 
 ```
-cd ros2_ws
+<span style="color:green">cd</span> ros2_ws
 ```
 * build the ws 
 ```
